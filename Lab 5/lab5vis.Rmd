@@ -1,0 +1,382 @@
+---
+title: "lab 5 visualisation"
+author: "Omkar Bhutra (omkbh878) , Sridhar Adhikarla (sriad858)"
+date: "October 11, 2018"
+output:
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning=FALSE, echo=FALSE, include=FALSE}
+library(plotly)
+library(crosstalk)
+library(tidyr)
+library(RColorBrewer)
+library(wordcloud)
+library(tm)
+library(GGally)
+library(htmltools)
+```
+
+##Assignment 1
+###Question 1
+```{r}
+five<-read.table("Five.txt",header=F, sep='\n')
+five <- data.frame(doc_id=row.names(five),text=five$V1)
+mycorpus1 <- Corpus(DataframeSource(five)) #Creating corpus (collection of text data)
+mycorpus1 <- tm_map(mycorpus1, removePunctuation)
+mycorpus1 <- tm_map(mycorpus1, function(x) removeWords(x, stopwords("english")))
+tdm1 <- TermDocumentMatrix(mycorpus1) #Creating term-document matrix
+m1 <- as.matrix(tdm1)
+
+
+v1 <- sort(rowSums(m1),decreasing=TRUE) #Sum up the frequencies of each word
+d1 <- data.frame(word = names(v1),freq=v1) #Create one column=names, second=frequences
+pal1 <- brewer.pal(8,"Dark2")
+pal1 <- pal1[-(1:2)] #Create palette of colors
+wordcloud::wordcloud(d1$word,d1$freq, scale=c(5,.3),min.freq=2,max.words=100, 
+          random.order=F, rot.per=.15, colors=pal1, vfont=c("sans serif","plain"))
+
+v <- v1[-1]
+d2 <- data.frame(word = names(v),freq=v) #Create one column=names, second=frequences
+pal1 <- brewer.pal(8,"Dark2")
+pal1 <- pal1[-(1:2)] #Create palette of colors
+wordcloud::wordcloud(d2$word,d2$freq, scale=c(3,.3),min.freq=2,max.words=100, 
+          random.order=F, rot.per=.15, colors=pal1, vfont=c("sans serif","plain"))
+```
+
+```{r, warning=FALSE, error=FALSE, out.width="100%"}
+oneTwo<-read.table("OneTwo.txt",header=F, sep='\n')
+oneTwo <- data.frame(doc_id=row.names(oneTwo),
+                   text=oneTwo$V1)
+mycorpus2 <- Corpus(DataframeSource(oneTwo)) #Creating corpus (collection of text data)
+mycorpus2 <- tm_map(mycorpus2, removePunctuation)
+mycorpus2 <- tm_map(mycorpus2, function(x) removeWords(x, stopwords("english")))
+tdm2 <- TermDocumentMatrix(mycorpus2) #Creating term-document matrix
+m2 <- as.matrix(tdm2)
+
+v2 <- sort(rowSums(m2),decreasing=TRUE) #Sum up the frequencies of each word
+d2 <- data.frame(word = names(v2),freq=v2) #Create one column=names, second=frequences
+pal2 <- brewer.pal(8,"Dark2")
+pal2 <- pal2[-(1:2)]
+wordcloud::wordcloud(d2$word,d2$freq, scale=c(5,.3),min.freq=2,max.words=100,random.order=F, rot.per=.15, colors=pal2, vfont=c("sans serif","plain"))
+
+v3 <- v2[-1]
+d3 <- data.frame(word = names(v3),freq=v3) #Create one column=names, second=frequences
+pal1 <- brewer.pal(8,"Dark2")
+pal1 <- pal1[-(1:2)] #Create palette of colors
+wordcloud::wordcloud(d3$word,d3$freq, scale=c(2,.3),min.freq=2,max.words=100, 
+          random.order=F, rot.per=.15, colors=pal1, vfont=c("sans serif","plain"))
+```
+
+The satisfied customers seem to be present in the first wordcloud, they mention that the casio watch is great, durable and lasted many years. The price is right and makes the watch a value for money buy. The many features of dual 'analog' and 'digital' display are mentioned with 'battery','replacement' and 'service' being taken positively.
+The unsatisfied customers mention casio watches bough from 'amazon' and that they might have had 'defective' watched that got 'stuck' and went ' still'. The 'price','battery','replacement' are viewed negatively by this group.
+
+###Question 2
+
+```{r}
+knitr::include_graphics("phrasenet1.png")#positive
+
+knitr::include_graphics("phrasenetp1.png")
+knitr::include_graphics("phrasenetp2.png")
+knitr::include_graphics("phrasenetp3.png")
+knitr::include_graphics("phrasenetp4.png")
+
+
+knitr::include_graphics("phrasenet2.png")#negative
+
+knitr::include_graphics("phrasenetn1.png")
+knitr::include_graphics("phrasenetn2.png")
+knitr::include_graphics("phrasenetn3.png")
+knitr::include_graphics("phrasenetn4.png")
+```
+Phrase nets for Five.txt and OneTwo.txt as given above
+
+ 
+They also mention 'strap, 'design', 'analog'  linked to words like 'like' and 'good' which are similar to the satisfied customers views as well. Both groups also mention 'battery' and 'replace'. Both groups generally mention that the watch looked good.
+Yes, the graph gives us details of the types of display such as 'digital' and 'analog', design and features such as the 'strap, 'battery','metal','modern' are mentioned.
+
+
+**1) Which properties of this watch are mentioned mostly often?**
+
+In the first phrase net, the 'watch' connected to 'durable','awesome','better', the value for money is mentioned with 'price' connected to 'right', the battery of the watched has been mentioned, replacement of the common parts such as the strap, battery, circuit are mentioned. 
+Some people rate it as poor but there are others who rate it good and also that it is easily readable at night. People are happy about the variety of designs and like that it is made of metal. We can also see that it is a digital watch, water resistant and has black color option. 
+
+**2) What are satisfied customers talking about?**
+
+Satisfied customers are mentioning words such as 'durable' ,'unbeatable','better','awesome'. They mention that the watch is 'comfortable', 'watar' suggesting it perfoms well underwater, changed the 'battery', they also suggest 'happy', 'pleased' and 'promised' suggesting the watch does everything as advertised. The mention models such as 'citizen'.
+
+**3) What are unsatisfied customers talking about?**
+
+The unsatisfied customers mention words such as 'stuck', 'hot','shame', 'disappointed'. Many people perhaps tried to 'replace' 'battery' and 'circuit. They also mention they had 'defective' watch.
+The unsatisfied customers are mostly commenting negatively on the battery life, that it works only for few months, non-functionality, not able to keep time and how often they replace its battery and circuit. Customers write about receiving defective pieces and returning the product back.
+
+**4) What are good and bad properties of the watch mentioned by both groups?**
+
+GOOD PROPERTIES :
+Stylish looks, right for the price, comfortable,ease of use, clear LCD display, water resistant and can be worn while swimming, made of metal,ease of replacement. 
+
+They also mention 'strap, 'design', 'analog'  linked to words like 'like' and 'good' which are similar to the satisfied customers views as well. Both groups also mention 'battery' and 'replace'. Both groups generally mention that the watch looked good.
+
+BAD PROPERTIES :
+Poor battery life and requiring replacements, stops working often, poor luminosity, bad display.
+
+Yes, the graph gives us details of the types of display such as 'digital' and 'analog', design and features such as the 'strap, 'battery','metal','modern' are mentioned.
+
+**5) Can you understand watch characteristics (like type of display, features of the watches) by observing these graphs?**
+
+* Clear LCD display
+* Huge size
+* Water resistant
+* Digital display
+* Made of metal
+* Alarm
+* Stop watch
+* Dual time
+
+
+###Question 3
+
+```{r}
+knitr::include_graphics("batterybad.png")
+knitr::include_graphics("battery.png")
+```
+
+Intresting views about the battery have been mentioned, such as:
+Negative: Customers say that the watch stopped working in just a few months so they replaced the battery but the watch got slower and did not keep time correctly.
+Positive: Customers mention that just battery replacement worked for them even as many as 4 times and the watch continued to work accurately for several years.
+
+Properties of the watch mentioned:
+   Appearence- Black, Gold and White face
+   Technological advance of the watch
+   Value for money
+   Display features- Analog and Digital display
+   Luminousity
+   
+ Characteristics of the watch:
+   Display- Digital and analog display
+   Chronometer
+   Sporty look
+   Luminous display
+   Face- Black,Gold or White
+   Water proof
+   Velcro nylon or metal band   
+   
+ Satisified customers are talking about-
+   Good appearence- modern look
+   Simple and sporty look
+   Durability
+   Economical pricing
+   Comfortable
+   Durablility
+   Velcro band and metal band- types of bands
+   Water resistant
+   Toughness of the watch
+   Casio's efforts in making atomic watches and also solar powered watches
+   
+ Dissatisified customers are talking about-
+   Low luminosity
+   Defective alarm
+   Analog display is defective
+   Buttons defective and damage easily
+   Chronometer not working
+   Low volume on alarm
+   Tough to get the defective product replaced
+   Dial getting stuck
+   Doesnt work when lunged deep in water
+   
+Positive and Negative properties:
+Positive:
+     Appearence due to face and size
+     Economical
+     Water resistant
+     Sporty and modern look
+     Tough 
+     Durable
+Negative:
+     Luminousity
+     Alarm
+     Bad quality buttons
+     Accuracy of time of Analog display
+     Replacement
+
+##Assignment 2
+
+###Question1
+
+```{r}
+x <- list(
+  title = "Eicosenoic"
+)
+y <- list(
+  title = "Linoleic"
+)
+olive<- read.csv("olive.csv")
+d <- SharedData$new(olive)
+scatterOlive <- plot_ly(d, x = ~eicosenoic, y = ~linoleic) %>% add_markers(color = I("blue")) %>% 
+  layout(xaxis = x, yaxis = y)
+scatterOlive
+```
+
+Observations with unusually low values of eicosenoic are (1,2,3). The occur at all ranges of linoleic (y-axis) values.
+
+###Question2 
+```{r}
+
+olive$Region<-as.factor(olive$Region)
+levels(olive$Region)<-c("North","South","Sardinia Island")
+barOlive <-plot_ly(d, x=olive$Region)%>%add_histogram()%>%layout(barmode="overlay")
+ 
+sb = subplot(scatterOlive,barOlive ,titleX = TRUE, titleY = TRUE)%>%
+  highlight(on="plotly_select", dynamic=T, persistent = T, opacityDim = I(1))%>%hide_legend()
+ 
+bscols(widths=c(3, NA),filter_slider("Slider", "Stearic", d, ~stearic)
+       ,sb%>%highlight(on="plotly_select", dynamic=T, persistent = T, opacityDim = I(1))%>%hide_legend())
+
+knitr::include_graphics("lab5vis30thnov.png")
+knitr::include_graphics("lab5vis30thnov1.png")
+knitr::include_graphics("lab5vis30thnov2.png")
+knitr::include_graphics("lab5vis30thnov3.png")
+```
+
+**Question: Identify the regions that correspond unusually low values of eicosenoic.** 
+Persistent brushing was used to identify regions that correspond to unusually low values of eicosenoic, these regions are **'South' and 'Sardinia Island'**. Each region is highlighted with a different color, we see that there is a clear distinction among the unusually low values of eicosenoic with respect to region. The lower range of values of linoleic (<=1050) belong to Sardinia Island and the higher range of values of linoleic (>1050) belong to South region.
+
+**Question: Use the slider and describe what additional relationships in the data can be found by using it.**
+It is seen that there are no observations from the 'South' region when the stearic value is greater than 273 or lesser than 199. Hence, we can infer that the south region has a stearic range of 199 to 273. 
+
+On closely observing the figures 2.2.3 and 2.2.4 and adjusting the sliders, we observe that many observations which had linoleic values greater than 1000 have do not exist when the stearic slider is set to "274 to 375". Similarly, when the slider is set to "152 to 198", many of the observations with linoleic values less than 1000 do not apper. Most observations with unusualy low values of eicosenoic also do not appear with the slider selections that exclude South region.
+
+**Question: Report which interaction operators were used in this step.**
+
+The interaction operators used are: 
+Navigation (zooming/panning along the x and y axis)
+Selection (Highlighting)
+Connecting (Linked Views)
+Filtering (Sample)
+Encoding Operator (Use of different highlighting color)
+
+###Question3
+```{r, warning=FALSE, message=FALSE}
+scatterOlive2 <- plot_ly(d, x = ~arachidic, y = ~linolenic) %>%
+  add_markers(color = I("black"))
+subplot(scatterOlive,scatterOlive2,titleX = TRUE, titleY = TRUE)%>%
+  highlight(on="plotly_select", dynamic=T, persistent=T, opacityDim = I(1)) %>% hide_legend() %>%
+  layout(title = "Scatterplots: Eicosenoic vs Linoleic, Arachidic vs Linolenic")
+
+knitr::include_graphics("lab5vis30thnov4.png")
+```
+
+
+**Question: Which outliers in (arachidic, linolenic) are also outliers in (eicosenoic, linoleic)?**
+
+**Are outliers grouped in some way? Use brushing to demonstrate your findings.**
+
+The observations that are highlighted in red could be considered as outliers for the Arachidic vs Linolenic plot. 
+These are also common outliers in the Eicosenoic vs Linoleic plot  except one point which lies in the center of this plot. Common outliers are grouped by having very low eicosenoic value and very high linolenic value, from these two subgroups emerge i.e with low and high Arachidic values.
+
+The observations in green in the Arachidic vs Linoleic plot are not outliers as they correspond to many observations in the Eicosenoic vs Linoleic plot. This is due to overplotting of the data. It is also observed that these observations belong to the region - Sardinia Island. Thus, high proportion of observations from Sardinia Island have unusual values which are exact multiples of 10 for arachidic (0, 10, 20, 30, 40, 50, 60) and linolenic (0, 10).  
+
+###Question4
+```{r}
+p<-GGally::ggparcoord(olive, columns = c(4:11))
+
+dcro<-plotly_data(ggplotly(p))%>%group_by(.ID)
+d1<-SharedData$new(dcro, ~.ID, group="olive")
+p1<-plot_ly(d1, x=~variable, y=~value)%>%
+  add_lines(line=list(width=0.3))%>%
+  add_markers(marker=list(size=0.3),
+              text=~.ID, hoverinfo="text")
+
+olive2=olive
+olive2$.ID=1:nrow(olive)
+d2<-SharedData$new(olive2, ~.ID, group="olive")
+p2<-plot_ly(d2, x=~factor(Region) )%>%add_histogram()%>%layout(barmode="overlay")
+
+ButtonsX=list()
+for (i in 4:11){
+  ButtonsX[[i-3]]= list(method = "restyle",
+                        args = list( "x", list(olive[[i]])),
+                        label = colnames(olive)[i])
+}
+
+ButtonsY=list()
+for (i in 4:11){
+  ButtonsY[[i-3]]= list(method = "restyle",
+                        args = list( "y", list(olive[[i]])),
+                        label = colnames(olive)[i])
+}
+ButtonsZ=list()
+for (i in 4:11){
+  ButtonsZ[[i-3]]= list(method = "restyle",
+                        args = list( "z", list(olive[[i]])),
+                        label = colnames(olive)[i])
+}
+
+olive3=olive
+olive3$.ID=1:nrow(olive)
+d3<-SharedData$new(olive3, ~.ID, group="olive")
+
+p3<-plot_ly(d3,x=~ButtonsX,y=~ButtonsY,z=~ButtonsZ)%>%add_markers() %>% layout(xaxis=list(title=ButtonsX), yaxis=list(title=ButtonsY),zaxis=list(title=ButtonsZ),
+         title = "Select variable:",
+         updatemenus = list(
+           list(y=0.9, buttons = ButtonsX),
+           list(y=0.6, buttons = ButtonsY),
+           list(y=0.3, buttons = ButtonsZ)
+         )  )
+
+ps<-htmltools::tagList(p1%>%
+                         highlight(on="plotly_select", dynamic=T, persistent = T, opacityDim = I(1))%>%
+                         hide_legend(),
+                       p2%>%
+                         highlight(on="plotly_select", dynamic=T, persistent = T, opacityDim = I(1))%>%
+                         hide_legend(),
+                       p3%>%highlight(on="plotly_click", dynamic=T, persistent = T)%>%hide_legend()
+                      ) 
+
+
+htmltools::browsable(ps)
+
+knitr::include_graphics("lab5vis30thnov5.png")
+knitr::include_graphics("lab5vis30thnov6.png")
+knitr::include_graphics("lab5vis30thnov7.png")
+```
+
+**Question: Use persistent brushing to mark each region by a different color. Observe the parallel coordinate plot and state which three variables (let's call them influential variables) seem to be mostly reasonable to pick up if one wants to differentiate between the regions. **
+
+Persistent brushing was utilised to mark each region by a different color. From our previous analysis, we know that eicosenoic can be used to differentiate between north and other regions, From the parallel coordinate plot we can see that the variables oleic and linoleic are disjoint in their values and hence these can be used. Linoleic also has values that can differentiate between sardinia island and south and hence it is used. Both linoleic and oleic show 3 different ranges of values that can represent out the regions correctly.
+
+**Question: Does the parallel coordinate plot demonstrate that there are clusters among the observations that belong to the same Region?**
+From the parallel coordinate plot , It is deduced that within the South Region there exists two clusters based on the disjoint values in stearic, oleic and linoleic. One cluster has lower oleic but high linoleic values.
+
+**Question: Select the three influential variables in the drop boxes and observe in the 3d-plot whether each Region corresponds to one cluster.**
+Each region does correspond to a cluster within the variable space. Region is a classification of the data and there may exist other clusters as seen with the South region. It was very difficult to analyse and select clusters without persistent brushing of the Regions with separate colors.
+
+###Question5
+**Think about which interaction operators are available in step 4 and what interaction operands they are be applied to.**
+
+Interaction operators present are:
+Navigation (Panning, Rotation, Zooming)
+Selection (highlighting)
+Connecting (Linked Views)
+Reconfiguring (changing the axis mapping in the 3D scatterplot) - applied to the data structure space
+Encoding (changing highlighting color) - applied to the attribute space
+
+**Question: Which additional interaction operators can be added to the visualization in step 4 to make it even more efficient/flexible?**
+The interaction operator that can be added is filter for the parallel coordinate plot where only the influential variables can be chosen to see the parallel coordinate plot.
+A slider to analyse different values of the influential variables can be implemented to make the analysis precise.
+
+**Question: Based on the analysis in the previous steps, try to suggest a strategy (or, maybe, several strategies) that would use information about the level of acids to discover which regions different oils comes from.**
+
+- If `Eicosenoic >= 10`, then region prediction is 'North'.
+- If `Eicosenoic < 10 and Oleic < 7500 and Linoleic > 1050`, then the region prediction is 'South'.
+- If `Eicosenoic < 10 and Oleic >= 7500 and Linoleic <= 1050`, then the region prediction is 'Sardinia Island'.
+
+### Apendix
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE}
+```
